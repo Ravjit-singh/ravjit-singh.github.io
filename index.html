@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ravjit Singh | Creative Developer</title>
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg-dark: #050505;
+            --bg-card: rgba(20, 20, 20, 0.6);
+            --bg-card-hover: rgba(30, 30, 30, 0.9);
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent: #ff2a2a; /* Vibrant Red */
+            --accent-glow: rgba(255, 42, 42, 0.4);
+            --border: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 8px;
+            --font-head: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* --- RESET --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            /* Remove tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Remove default focus outline */
+        *:focus {
+            outline: none;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 {
+            font-family: var(--font-head);
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, #bbb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .red-text {
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* --- BACKGROUND MESH --- */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .glow-blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.15;
+            filter: blur(80px);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out alternate;
+        }
+
+        .blob-1 { top: -200px; right: -200px; }
+        .blob-2 { bottom: -200px; left: -200px; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-50px, 50px) scale(1.1); }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            padding: 15px 30px;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: var(--font-head);
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 150px 20px 100px;
+            position: relative;
+        }
+
+        .hero-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            max-width: 600px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            background: var(--accent);
+            color: white;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--font-head);
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.2);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 42, 42, 0.4);
+            background: #ff4444;
+        }
+
+        /* --- SECTIONS --- */
+        section {
+            padding: 120px 10%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            transition: 0.4s ease;
+            height: 100%;
+        }
+
+        .glass-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        /* About Grid */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-num {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: var(--font-head);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .skill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            transition: 0.3s;
+        }
+        
+        .skill-item:hover {
+            border-color: var(--accent);
+            background: rgba(255, 42, 42, 0.05);
+        }
+
+        /* --- UPDATED WORK CARDS --- */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            width: 100%;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none; /* Make generic anchor styling transparent */
+            height: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: var(--bg-card-hover);
+        }
+
+        .project-image-container {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+
+        .project-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            opacity: 0.8;
+        }
+
+        .project-card:hover .project-image-container img {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        /* Overlay for "View Project" */
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .project-content {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-role {
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .project-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            line-height: 1.6;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 100px;
+            color: #ccc;
+            border: 1px solid rgba(255,255,255,0.05);
+            font-family: var(--font-mono);
+        }
+
+        /* Experience Timeline */
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 40px;
+            padding-bottom: 50px;
+            border-left: 2px solid rgba(255,255,255,0.05);
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .timeline-date {
+            color: var(--text-muted);
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        /* Contact */
+        #contact {
+            padding-bottom: 60px; /* Reduced from default 120px to reduce gap */
+        }
+
+        .contact-box {
+            background: linear-gradient(145deg, #111, #0a0a0a);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 60px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .social-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .social-icon:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px 0; /* Reduced padding */
+            color: #444;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            margin-top: 0; /* Removed large margin-top */
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .about-grid, .timeline-item { grid-template-columns: 1fr; }
+            .timeline { border-left: none; padding-left: 0; }
+            .timeline-item { padding-left: 20px; border-left: 2px solid rgba(255,255,255,0.1); }
+            nav { padding: 15px 20px; width: 95%; }
+            .nav-links { display: none; }
+            section { padding: 80px 5%; }
+            h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Elements -->
+    <div class="bg-glow">
+        <div class="glow-blob blob-1"></div>
+        <div class="glow-blob blob-2"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">RAVJIT <span class="red-text">SINGH</span></a>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#work">Work</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <a href="#contact" class="btn" style="padding: 10px 25px; font-size: 0.9rem;">Let's Talk</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-label">Lets build your idea</div>
+            <h1>I Build <span class="red-text">Digital</span><br>Experiences.</h1>
+            <p>I am Ravjit Singh. A Full-Stack Developer & UI/UX Designer crafting aesthetic, high-performance web applications.</p>
+            <div class="hero-btns">
+                <a href="#work" class="btn">View Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="section-header">
+            <span class="section-subtitle">Who I Am</span>
+            <h2 class="section-title">About Me</h2>
+        </div>
+        
+        <div class="about-grid">
+            <div class="glass-card about-text-card">
+                <p style="margin-bottom: 20px;">
+                    Hi, I'm Ravjit Singh, based in <span style="color: white; font-weight: 600;">Chandigarh, India</span>. 
+                    I bridge the gap between design and engineering. My focus is not just on writing code, but on creating intuitive digital journeys that solve real problems.
+                </p>
+                <p style="color: var(--text-muted);">
+                    With a background in both UI design and full-stack development, I bring a unique perspective to every project—ensuring it looks beautiful and works flawlessly.
+                </p>
+                
+                <div style="margin-top: 40px; display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 50px; height: 50px; background: rgba(255,42,42,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0;">CSE in Web Development</h4>
+                        <span style="font-size: 0.85rem; color: #666;">CCET (2026-2030)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-num">3+</span>
+                    <span class="stat-label">Years Exp</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">6+</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">24/7</span>
+                    <span class="stat-label">Support</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">100%</span>
+                    <span class="stat-label">Satisfaction</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <div class="section-header">
+            <span class="section-subtitle">My Arsenal</span>
+            <h2 class="section-title">Tech Stack</h2>
+        </div>
+
+        <div class="skills-grid">
+            <div class="skill-item">
+                <span>HTML5 & CSS3</span>
+                <span class="red-text">95%</span>
+            </div>
+            <div class="skill-item">
+                <span>React JS</span>
+                <span class="red-text">85%</span>
+            </div>
+            <div class="skill-item">
+                <span>JavaScript (ES6+)</span>
+                <span class="red-text">75%</span>
+            </div>
+            <div class="skill-item">
+                <span>Figma / UI</span>
+                <span class="red-text">90%</span>
+            </div>
+            <div class="skill-item">
+                <span>Python</span>
+                <span class="red-text">80%</span>
+            </div>
+            <div class="skill-item">
+                <span>Firebase</span>
+                <span class="red-text">70%</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience">
+        <div class="section-header">
+            <span class="section-subtitle">Career Path</span>
+            <h2 class="section-title">Experience</h2>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <span class="timeline-date">2025 - Present</span>
+                <div>
+                    <h3>Creator / Full-Stack Developer</h3>
+                    <span style="color: var(--accent); font-size: 0.9rem; font-weight: 600;">Rchat Inc.</span>
+                    <p style="margin-top: 10px; color: var(--text-muted); font-size: 0.95rem;">Leading development of scalable chat architecture and overseeing full-stack implementation.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-date">2024 - 2025</span>
+                <div>
+                    <h3>Web & UX Designer</h3>
+                    <span style="color: var(--accent); font-size: 0.9rem; font-weight: 600;">Service Linkup Inc.</span>
+                    <p style="margin-top: 10px; color: var(--text-muted); font-size: 0.95rem;">Redesigned core platform UI resulting in 40% increase in user engagement.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-date">2023 - 2024</span>
+                <div>
+                    <h3>Senior UX Designer</h3>
+                    <span style="color: var(--accent); font-size: 0.9rem; font-weight: 600;">Exam Vault Inc.</span>
+                    <p style="margin-top: 10px; color: var(--text-muted); font-size: 0.95rem;">Assisted in wireframing and prototyping mobile applications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work Section -->
+    <section id="work">
+        <div class="section-header">
+            <span class="section-subtitle">Portfolio</span>
+            <h2 class="section-title">Selected Works</h2>
+        </div>
+
+        <div class="work-grid">
+            <!-- Project 1 -->
+            <a href="https://servicelinkup.blogspot.com" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <!-- Placeholder: Replace with your actual project image -->
+                    <img src="https://i.postimg.cc/sD6nXXWj/Picsart-25-08-24-11-57-30-275.jpg" alt="Service Linkup Mockup">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">Platform Design</span>
+                    <h3 class="project-title">Service Linkup</h3>
+                    <p class="project-desc">Connecting users with trusted local service professionals with real-time booking.</p>
+                    <div class="tags">
+                        <span class="tag">Webflow</span>
+                        <span class="tag">API</span>
+                        <span class="tag">UI/UX</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Project 2 -->
+            <a href="https://ravjit-singh.github.io/rchat" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <img src="https://ravjit-singh.github.io/Portfolio-site-manifest/rchat.jpg" alt="Rchat Mockup">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">Mobile App</span>
+                    <h3 class="project-title">Rchat</h3>
+                    <p class="project-desc">Next-gen messaging app focused on privacy, speed, and sleek dark mode UI.</p>
+                    <div class="tags">
+                        <span class="tag">React</span>
+                        <span class="tag">Web RTC</span>
+                        <span class="tag">UI/UX</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Project 3 -->
+            <a href="https://ravjit-singh.github.io/exam_vault" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <img src="https://i.postimg.cc/QxnJxzZg/Picsart-25-10-25-15-48-07-015.jpg" alt="Exam Vault Mockup">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">Convenience</span>
+                    <h3 class="project-title">Exam Vault</h3>
+                    <p class="project-desc">Digital resource library for students featuring a custom responsive web application.</p>
+                    <div class="tags">
+                        <span class="tag">Webflow</span>
+                        <span class="tag">Database</span>
+                        <span class="tag">API</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Project 4 -->
+            <a href="https://ravjit-singh.github.io/r-studio" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <img src="https://ravjit-singh.github.io/Portfolio-site-manifest/rstudio.jpg" alt="R Studio Mockup">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">Dev tool</span>
+                    <h3 class="project-title">R Studio</h3>
+                    <p class="project-desc">A code editor supporting syntax highlighting and real-time project management</p>
+                    <div class="tags">
+                        <span class="tag">API</span>
+                        <span class="tag">Design</span>
+                        <span class="tag">Prism.js</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Project 5 -->
+            <a href="https://ravjit-singh.github.io/rshare" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <img src="https://ravjit-singh.github.io/Portfolio-site-manifest/rshare.jpg" alt="R Share">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">connectivity</span>
+                    <h3 class="project-title">R Share</h3>
+                    <p class="project-desc">A high-speed P2P file transfer app that functions with just an internet connection.</p>
+                    <div class="tags">
+                        <span class="tag">Webflow</span>
+                        <span class="tag">UI/UX</span>
+                        <span class="tag">Web RTC</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Project 6 -->
+            <a href="https://ravjit-singh.github.io/r-expenses" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <img src="https://ravjit-singh.github.io/Portfolio-site-manifest/rexpense.jpg" alt="TaskMaster AI Mockup">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">convenience</span>
+                    <h3 class="project-title">R Exepense</h3>
+                    <p class="project-desc">A streamlined finance tracker for monitoring daily income and expenses with a visual dashboard</p>
+                    <div class="tags">
+                        <span class="tag">API</span>
+                        <span class="tag">UI/UX</span>
+                        <span class="tag">React</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Project 7 -->
+            <a href="https://ravjit-singh.github.io/rmusic" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <img src="https://ravjit-singh.github.io/portfolio/rmusic.jpg" alt="Neon Dashboard Mockup">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">Convenience</span>
+                    <h3 class="project-title">R Music</h3>
+                    <p class="project-desc">A online music app which can play music based on you mood.</p>
+                    <div class="tags">
+                        <span class="tag">React</span>
+                        <span class="tag">API</span>
+                        <span class="tag">Databases</span>
+                    </div>
+                </div>
+            </a>
+
+             <!-- Project 8 -->
+             <a href="https://ravjit-singh.github.io/pwagen" target="_blank" class="project-card">
+                <div class="project-image-container">
+                    <img src="https://ravjit-singh.github.io/Portfolio-site-manifest/pwaforge.jpg" alt="DevFolio Mockup">
+                    <div class="project-overlay">
+                        <span class="view-btn">View on GitHub <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <span class="project-role">Dev tool</span>
+                    <h3 class="project-title">PWA Forge</h3>
+                    <p class="project-desc">An app that generates all.the required files for a webpage to be turned into a PWA</p>
+                    <div class="tags">
+                        <span class="tag">Webflow</span>
+                        <span class="tag">UI/UX</span>
+                        
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="contact-box">
+            <span class="section-subtitle">What's Next?</span>
+            <h2 style="font-size: 2.5rem; margin: 20px 0;">Let's Work Together</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                Currently available for freelance projects. If you have an idea that needs to be realized, I'm just a message away.
+            </p>
+            <a href="contact.html" class="btn">Say Hello</a>
+
+            <div class="social-links">
+                <a href="https://wa.me/917087566133" class="social-icon" target="_blank">
+                <i class="fab fa-whatsapp"></i>
+                </a>        
+                <a href="https://www.instagram.com/_ravjitsingh_?igsh=NGtpMWQwaXUwd2p3" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/ravjit-singh" class="social-icon"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Ravjit Singh. Crafted with hardwork and Code.</p>
+    </footer>
+
+    <!-- GSAP Animations -->
+    <script>
+        const initAnimations = () => {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // --- Hero Animation (Immediate) ---
+            const tl = gsap.timeline();
+            
+            // Set initial states for hero elements to avoid FOUC
+            gsap.set(".logo, .nav-links a, .hero-label, .hero h1, .hero p, .hero .btn", { autoAlpha: 0, y: 30 });
+
+            tl.to(".logo", {
+                autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out"
+            })
+            .to(".nav-links a", {
+                autoAlpha: 1, y: 0, stagger: 0.1, duration: 0.8, ease: "power3.out"
+            }, "-=0.5")
+            .to(".hero-label", {
+                autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out"
+            }, "-=0.5")
+            .to(".hero h1", {
+                autoAlpha: 1, y: 0, duration: 1, ease: "power3.out"
+            }, "-=0.6")
+            .to(".hero p", {
+                autoAlpha: 1, y: 0, duration: 1, ease: "power3.out"
+            }, "-=0.8")
+            .to(".hero .btn", {
+                autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out"
+            }, "-=0.8");
+
+            // --- Generic Fade In (Headers, Text) ---
+            gsap.utils.toArray('.section-header, .about-text-card, .contact-box').forEach(el => {
+                gsap.set(el, { autoAlpha: 0, y: 50 }); // Set initial state
+                gsap.to(el, {
+                    scrollTrigger: {
+                        trigger: el,
+                        start: "top 95%", // Very early trigger
+                        toggleActions: "play none none none"
+                    },
+                    autoAlpha: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out"
+                });
+            });
+
+            // --- Batch Animations (Grids) ---
+            // This is safer than triggering the whole container
+            const batchAnimate = (selector) => {
+                const elements = gsap.utils.toArray(selector);
+                if (elements.length > 0) {
+                    gsap.set(elements, { autoAlpha: 0, y: 50 }); // Set initial state
+                    
+                    ScrollTrigger.batch(elements, {
+                        start: "top 95%",
+                        onEnter: batch => gsap.to(batch, {
+                            autoAlpha: 1, 
+                            y: 0, 
+                            stagger: 0.15, 
+                            duration: 0.8, 
+                            ease: "power3.out", 
+                            overwrite: true
+                        })
+                    });
+                }
+            };
+
+            batchAnimate(".stat-item");
+            batchAnimate(".skill-item");
+            batchAnimate(".project-card");
+            batchAnimate(".timeline-item");
+
+            ScrollTrigger.refresh();
+        };
+
+        // Initialize immediately if ready, or wait for load
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            initAnimations();
+        } else {
+            window.addEventListener("DOMContentLoaded", initAnimations);
+        }
+    </script>
+</body>
+</html>
+
+
